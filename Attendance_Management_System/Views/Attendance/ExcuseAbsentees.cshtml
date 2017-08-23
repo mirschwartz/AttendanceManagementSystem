@@ -1,0 +1,46 @@
+﻿@using Attendance_Management_System.Data.Models
+@model Attendance_Management_System.ViewModels.ExcuseAbsenteesVM
+
+@{
+    ViewBag.Title = "Excuse Absentees";
+    ViewBag.Description = "Excuse Absentees";
+}
+
+<h2>Excuse Absentees</h2>
+
+<form method="post" action="/attendance/excuseabsentees">
+    <table class="table table-hover table-striped table-bordered">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Teacher</th>
+            <th>Class</th>
+            <th>Excused</th>
+            <th>Notes</th>
+        </tr>
+        @{ int index = -1;
+            foreach (Attendance a in Model.AbsentStudents)
+            {
+                index++;
+                <tr>
+                    <td>@a.StudentClass.Student.FirstName</td>
+                    <td>@a.StudentClass.Student.LastName</td>
+                    <td>@a.TeacherSubject.Teacher.Title @a.TeacherSubject.Teacher.LastName</td>
+                    <td>@a.StudentClass.Class.ClassName</td>
+                    <td>
+                        <input type="hidden" name="attendance[@index].AttendanceId" value="@a.AttendanceId" />
+                        <input type="hidden" name="attendance[@index].TeacherSubjectId" value="@a.TeacherSubjectId" />
+                        <input type="hidden" name="attendance[@index].StudentClassId" value="@a.StudentClassId" />
+                        <input type="hidden" name="attendance[@index].Date" value="@a.Date" />
+                        <input type="hidden" name="attendance[@index].Period" value="@a.Period" />
+
+                        <input type="checkbox" @(a.Status == Status.ExcusedAbsence ? "checked" : "") name="attendance[@index].Status" value="3" />
+                        <input type="hidden" name="attendance[@index].Status" value="2" />
+                    </td>
+                    <td><textarea name="attendance[@index].notes" rows="1" class="form-control">@(a.notes == "null" ? "" : a.notes)</textarea></td>
+                </tr>
+            }
+        }
+    </table>
+    <button class="btn btn-theme">Submit</button>
+</form>

@@ -1,0 +1,40 @@
+﻿@model Attendance_Management_System.ViewModels.SigninVM
+
+@{
+    ViewBag.Title = "Signin";
+}
+
+<style>
+    body {
+        background-image: url(http://tompkinschiropractic.com/wp-content/uploads/2015/06/school-chalkboard.jpg);
+        background-repeat: no-repeat;
+        background-size: 100%;
+    }
+
+    .font {
+        font-family: 'Cabin Sketch', serif;
+        color: white;
+    }
+</style>
+
+@if (!String.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-danger">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @Model.Message
+    </div>
+}
+<div class="row">
+    <div class="col-md-4 col-md-offset-2" style="margin-top: 40px;">
+        <h1 class="font">Sign in</h1>
+        <form id="signin-form" method="post" action="/user/signin">
+            <input type="text" id="username" name="username" placeholder="Username" class="form-control" style="margin-bottom: 5px;" />
+            <input type="password" id="password" name="password" placeholder="Password" class="form-control" style="margin-bottom: 5px;" />
+            <button id="signin-btn" class="btn btn-theme">Sign in</button>
+        </form>
+    </div>
+</div>
+
+@section scripts{    
+    <script src="~/Scripts/signin.js"></script>
+}

@@ -1,0 +1,31 @@
+﻿body {
+}
+
+.btn-theme{
+    background-color: #CC7F4F;
+    color: white;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > th {
+  background-color: #3A4E48;
+  color: white;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td {
+    background-color: #E6EDEB;
+}
+
+.table-hover > tbody > tr:hover > td {
+  background-color: #B7CCC5;
+}
+
+.btn-link-theme {
+  font-weight: normal;
+  color: #3A4E48;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+a{
+  color: #3A4E48;
+}

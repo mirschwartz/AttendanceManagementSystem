@@ -1,0 +1,221 @@
+﻿@using Attendance_Management_System.Data.Models
+@model Attendance_Management_System.ViewModels.AdminStudentsVM
+
+@{
+    ViewBag.Title = "Students";
+    ViewBag.Description = "View and edit all students";
+}
+
+<div class="col-md-offset-1 col-md-10">
+    <button id="btn-add-student" class="btn btn-theme">Add Student</button>
+
+    <button id="btn-show-active" class="btn btn-link btn-link-theme">Show Active</button>
+    <button id="btn-show-all" class="btn btn-link btn-link-theme">Show All</button>
+
+    <select class="form-control" id="filter-class" style="margin-top: 5px;">
+        <option value="0">Sort By Class..........</option>
+        @foreach (Class c in Model.Classes)
+        {
+            <option value="@c.ClassId">@c.ClassName - @c.Year</option>
+        }
+    </select>
+
+    <table class="table table-hover table-striped table-bordered" style="margin-top: 5px;">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Class</th>
+            <th>Active</th>
+            <th>More Options</th>
+        </tr>
+        @foreach (var s in Model.Students)
+        {
+            <tr>
+                <td>@s.FirstName</td>
+                <td>@s.LastName</td>
+                <td>
+                    @foreach (var sc in s.StudentClasses)
+                    {
+                        <input type="hidden" value="@sc.ClassId" />
+                        <span @Html.Raw(!sc.IsActive ? "style='color: #CC7F4F'" : "")> @sc.Class.ClassName-@sc.Class.Year @(sc != s.StudentClasses.Last() ? "," : "")</span>
+                    }
+
+                </td>
+                <td>
+                    <input type="hidden" value=@(s.IsActive ? "true" : "false") />
+                    @Html.Raw(s.IsActive ? "<span class='glyphicon glyphicon-ok-circle' aria-hidden='true'></span>" : "")
+                </td>
+                <td>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button class="btn btn-edit btn-link btn-link-theme" data-id="@s.StudentId">
+                                <span class="glyphicon glyphicon-edit"></span> Edit
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <form method="post" action="/Admin/changeStudentActiveState">
+                                <input type="hidden" name="isactive" value=@(s.IsActive ? "false" : "true") />
+                                <input type="hidden" name="studentId" value="@s.StudentId" />
+                                <button class="btn btn-link btn-link-theme">@(s.IsActive ? "Mark Inactive" : "Mark Active")</button>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<!--New Student Modal-->
+<div class="modal fade" id="new-student-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/admin/newStudent" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add Student</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="isactive" value="true" />
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>First Name</label></div>
+                        <div class="col-md-9"><input type="text" id="first-name" name="firstName" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Last Name</label></div>
+                        <div class="col-md-9"><input type="text" id="last-name" name="lastName" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Cell Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="cell-phone" name="cellphone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Phone Number</label></div>
+                        <div class="col-md-9"><input type="text" id="home-phone" name="homephone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Address 1</label></div>
+                        <div class="col-md-9"><input type="text" id="address1" name="address1" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Address 2</label></div>
+                        <div class="col-md-9"><input type="text" id="address2" name="address2" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>City</label></div>
+                        <div class="col-md-9"><input type="text" id="city" name="city" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>State</label></div>
+                        <div class="col-md-9"><input type="text" id="state" name="state" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Zip Code</label></div>
+                        <div class="col-md-9"><input type="text" id="zip" name="zip" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+                    
+                    <div id="classes-div-new" class="students-classes">
+
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn btn-theme add-class-new">Add Class</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btn-add" class="btn btn-theme">Add</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--Edit Modal-->
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/admin/updatestudent" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Student</h4>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" name="StudentId" id="student-id">
+                    <input type="hidden" name="IsActive" id="isActive" />
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>First Name</label></div>
+                        <div class="col-md-9"><input type="text" id="first-name-edit" name="firstName" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Last Name</label></div>
+                        <div class="col-md-9"><input type="text" id="last-name-edit" name="lastName" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Cell Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="cell-phone-edit" name="cellphone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Home Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="home-phone-edit" name="homephone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Address 1</label></div>
+                        <div class="col-md-9"><input type="text" id="address1-edit" name="address1" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Address 2</label></div>
+                        <div class="col-md-9"><input type="text" id="address2-edit" name="address2" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>City</label></div>
+                        <div class="col-md-9"><input type="text" id="city-edit" name="city" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>State</label></div>
+                        <div class="col-md-9"><input type="text" id="state-edit" name="state" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Zip Code</label></div>
+                        <div class="col-md-9"><input type="text" id="zip-edit" name="zip" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div id="classes-div-edit" class="students-classes">
+
+                    </div>
+
+                    <div class="row">
+                        <button type="button" class="btn btn-theme add-class-edit">Add Class</button>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btn-save-changes" class="btn btn-theme">Save changes</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+@section scripts{
+    <script src="~/Scripts/admin.students.js"></script>
+}    

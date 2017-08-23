@@ -1,0 +1,30 @@
+﻿@using Attendance_Management_System.Data.Models
+@model Attendance_Management_System.ViewModels.TeachersVM
+
+@{
+    ViewBag.Title = "Teachers";
+    ViewBag.Description = "View all teachers";
+}
+
+<div class="col-md-offset-1 col-md-10">
+
+    <h2>Teachers</h2>
+
+    <table class="table table-hover table-striped table-bordered">
+        <tr>
+            <th>Teacher</th>
+            <th>Subjects</th>
+            <th>Absentees</th>
+            <th>Over-all Attendees</th>
+        </tr>
+        @foreach (var t in Model.Teachers)
+        {
+            <tr>
+                <td><a href="/Teacher/TeacherRecord?teacherId=@t.TeacherId">@t.Teacher</a></td>
+                <td>@t.Subjects</td>
+                <td>@t.Absentees</td>
+                <td>@t.Percentage%</td>
+            </tr>
+        }
+    </table>
+</div>

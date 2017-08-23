@@ -1,0 +1,57 @@
+﻿@using Attendance_Management_System.Data.Models
+@model Attendance_Management_System.ViewModels.LatenessVM
+
+@{
+    ViewBag.Title = "Latenesses";
+    ViewBag.Description = "Latenesses";
+}
+
+<h2>Latenesses</h2>
+
+<button class="btn btn-theme">Add Lateness</button>
+
+<table class="table-hover table-striped table-bordered">
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date</th>
+    </tr>
+    @foreach (var lateness in Model.Latenesses)
+    {
+        <tr>
+            <td>@lateness.StudentClass.Student.FirstName</td>
+            <td>@lateness.StudentClass.Student.LastName</td>
+            <td>@lateness.Date</td>
+        </tr>
+    }
+</table>
+
+<div class="modal fade" id="new-lateness-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/admin/addLateness" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add Lateness</h4>
+                </div>
+                <div class="modal-body">
+                    @*teachersubjectid
+                    studentclassId
+                    date
+                    period - not so efficient
+                    status - ExcusedLateness/ UnexcusedLateness
+                    signingin
+                    notes*@
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btn-add" class="btn btn-theme">Add</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+@section scripts{
+    
+}

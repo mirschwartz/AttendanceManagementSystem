@@ -1,0 +1,168 @@
+﻿@using Attendance_Management_System.Data.Models
+@model Attendance_Management_System.ViewModels.AdminTeachersVM
+
+@{
+    ViewBag.Title = "Teachers";
+    ViewBag.Description = "View and edit all teachers";
+}
+
+<div class="col-md-offset-1 col-md-10">
+    <button id="btn-add-teacher" class="btn btn-theme">Add Teacher</button>
+    <button id="btn-show-active" class="btn btn-link btn-link-theme">Show Active</button>
+    <button id="btn-show-all" class="btn btn-link btn-link-theme">Show All</button>
+
+    <table class="table table-hover table-striped table-bordered" style="margin-top: 5px;">
+        <tr>
+            <th>Title</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Subject</th>
+            <th>Active</th>
+            <th>More Options</th>
+        </tr>
+        @foreach (var t in Model.Teachers)
+        {
+            <tr>
+                <td>@t.Title</td>
+                <td>@t.FirstName</td>
+                <td>@t.LastName</td>
+                <td>
+                    @foreach (var s in t.TeacherSubjects)
+                    {
+                        <span @Html.Raw(!s.IsActive ? "style='color: #CC7F4F'" : "")>@s.Subject @(s != t.TeacherSubjects.Last() ? "," : "")</span>
+                    }
+                </td>
+                <td>
+                    <input type="hidden" value=@(t.IsActive ? "true" : "false") />
+                    @Html.Raw(t.IsActive ? "<span class='glyphicon glyphicon-ok-circle' aria-hidden='true'></span>" : "")
+                </td>
+                <td>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button class="btn btn-edit btn-link btn-link-theme" data-teacher-id="@t.TeacherId">Edit</button>
+                        </div>
+                        <div class="col-md-1">
+                            <form method="post" action="/Admin/ChangeTeacherActiveState">
+                                <input type="hidden" name="IsActive" value=@(t.IsActive ? "false" : "true") />
+                                <input type="hidden" name="TeacherId" value="@t.TeacherId" />
+                                <button class="btn btn-link btn-link-theme">@(t.IsActive ? "Mark Inactive" : "Mark Active")</button>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<!--add Teacher Modal-->
+<div class="modal fade" id="new-teacher-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/admin/newTeacher" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add Teacher</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="IsActive" value="true" />
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Title</label></div>
+                        <div class="col-md-9">
+                            <input type="text" id="title" name="title" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>First Name</label></div>
+                        <div class="col-md-9"><input type="text" id="first-name" name="firstName" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Last Name</label></div>
+                        <div class="col-md-9"><input type="text" id="last-name" name="lastName" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Cell Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="cell-phone" name="cellPhone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Home Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="home-phone" name="homePhone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="subjects">
+
+                    </div>
+
+                    <button type="button" class="btn btn-theme add-subject-new">Add Subject</button>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btn-add" class="btn btn-theme">Add</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--Edit Teacher Modal-->
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/admin/editTeacher" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Teacher</h4>
+                </div>
+                <div class="modal-body edit-teacher">
+                    <input type="hidden" name="IsActive" id="isActive-edit" />
+                    <input type="hidden" name="teacherid" id="teacher-id" />
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Title</label></div>
+                        <div class="col-md-9"><input type="text" name="title" id="title-edit" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>First Name</label></div>
+                        <div class="col-md-9"><input type="text" name="firstName" id="first-name-edit" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Last Name</label></div>
+                        <div class="col-md-9"><input type="text" name="lastName" id="last-name-edit" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Cell Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="cell-phone-edit" name="cellPhone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>Home Phone</label></div>
+                        <div class="col-md-9"><input type="text" id="home-phone-edit" name="homePhone" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="subjects-edit">
+
+                    </div>
+
+                    <button type="button" class="btn btn-theme add-subject-edit">Add Subject</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btn-save-changes" class="btn btn-theme">Save changes</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+@section scripts{
+    <script src="~/Scripts/admin.teachers.js"></script>
+}

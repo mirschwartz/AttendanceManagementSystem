@@ -1,0 +1,71 @@
+﻿@using Attendance_Management_System.Data.Models
+@model Attendance_Management_System.ViewModels.TeacherRecordVM
+
+@{
+    ViewBag.Title = "Teacher's Record";
+    ViewBag.Description = "View teacher's record";
+}
+
+<div class="row" style="margin-bottom: 20px;" id="back-to-teachers">
+    <div class="col-md-4 col-md-offset-1">
+        <a href="/teacher/index">Back To Teachers</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-1">
+        <label>From:</label>
+        <input type="text" placeholder="Date" class="form-control date" id="date-from" />
+    </div>
+
+    <div class="col-md-4">
+        <label>To:</label>
+        <input type="text" placeholder="Date" class="form-control date" id="date-to" />
+    </div>
+
+    <div class="col-md-2 col-md-offset-1">
+        <button class="btn btn-theme" id="print">Print</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-9 col-md-offset-1">
+        <h2>@Model.Teacher.Title @Model.Teacher.FirstName @Model.Teacher.LastName - @Model.Subjects</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <table class="table table-hover table-bordered table-striped">
+            <tr>
+                <th>#</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Excused</th>
+            </tr>
+            @{ var count = 0;
+                foreach (var a in Model.Attendance)
+                {
+                    count++;
+                    <tr>
+                        <td>@count</td>
+                        <td>@a.StudentClass.Student.FirstName</td>
+                        <td>@a.StudentClass.Student.LastName</td>
+                        <td><span @Html.Raw(!a.StudentClass.IsActive ? "style='color: #CC7F4F'" : "")>@a.StudentClass.Class.ClassName-@a.StudentClass.Class.Year</span></td>
+                        <td>@a.TeacherSubject.Subject</td>
+                        <td>@a.Date.ToShortDateString()</td>
+                        <td>@Html.Raw(a.Status == Status.ExcusedAbsence ? "<span class='glyphicon glyphicon-ok-circle' aria-hidden='true'></span>" : "")</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/bootstrap-datepicker.js"></script>
+    <script src="~/Scripts/teacherRecord.js"></script>
+}
