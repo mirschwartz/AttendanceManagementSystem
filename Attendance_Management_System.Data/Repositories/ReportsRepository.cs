@@ -17,19 +17,19 @@ namespace Attendance_Management_System.Data.Repositories
             _connectionString = connectionString;
         }
 
-        public List<Attendance> GetReport(int? classId, int? student, int? teacher, DateTime? date, Status? status)
+        public List<BCAttendance> GetReport(int? classId, int? student, int? teacher, DateTime? date, Status? status)
         {
             using(var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                var attendance = dbContext.Attendances
+                var attendance = dbContext.BCAttendances
                     .Include(a => a.StudentClass.Student)
                     .Include(a => a.TeacherSubject.Teacher)
                     .Include(a => a.StudentClass.Class)
                     .ToList();
 
-                attendance = classId != 0 ? attendance.Where(a => a.StudentClass.ClassId == classId).ToList() : attendance;
-                attendance = student != 0 ? attendance.Where(a => a.StudentClass.StudentId == student).ToList() : attendance;
-                attendance = teacher != 0 ? attendance.Where(a => a.TeacherSubject.TeacherId == teacher).ToList() : attendance;
+                attendance = classId != 0 ? attendance.Where(a => a.StudentClass.BCClassId == classId).ToList() : attendance;
+                attendance = student != 0 ? attendance.Where(a => a.StudentClass.BCStudentId == student).ToList() : attendance;
+                attendance = teacher != 0 ? attendance.Where(a => a.TeacherSubject.BCTeacherId == teacher).ToList() : attendance;
                 attendance = date != null ? attendance.Where(a => a.Date == date).ToList() : attendance;
                 attendance = status != 0 ? attendance.Where(a => a.Status == status).ToList() : attendance;
 
@@ -38,27 +38,28 @@ namespace Attendance_Management_System.Data.Repositories
 
         }
 
-        public List<Class> GetAllClasses()
+        public List<BCClass> GetAllClasses()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Classes.ToList();
+                return dbContext.BCClasses.ToList();
             }
         }
 
-        public List<Teacher> GetAllTeachers()
+        public List<BCTeacher> GetAllTeachers()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Teachers.ToList();
+                return dbContext.BCTeachers.ToList();
             }
         }
 
-        public List<Student> GetAllStudents()
+        public List<BCStudent> GetAllStudents()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Students.ToList();
+                var settings = dbContext.Settings.FirstOrDefault();
+                return dbContext.BCStudents.Where(s => s.YearStart == settings.YearStart && s.YearEnd == settings.YearEnd).ToList();
             }
         }
     }

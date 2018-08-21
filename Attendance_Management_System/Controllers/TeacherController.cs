@@ -25,7 +25,7 @@ namespace Attendance_Management_System.Controllers
         // GET: Teacher
         public ActionResult Index()
         {
-            TeachersVM vm = new TeachersVM(_teacherRepo.GetActiveTeachers());
+            TeachersVM vm = new TeachersVM(_teacherRepo.GetActiveTeachers(), _teacherRepo.GetSettings());
 
             return View(vm);
         }
@@ -40,6 +40,19 @@ namespace Attendance_Management_System.Controllers
                 Subjects = ToStringLists.StringSubjects(teacher.TeacherSubjects),
                 Attendance = _teacherRepo.GetTeachersAttendance(teacherId)
             };
+            return View(vm);
+        }
+
+        public ActionResult NewTeacherRecord(int teacherId)
+        {
+            var teacher = _teacherRepo.GetTeacher(teacherId);
+
+            TeacherRecordsVM vm = new TeacherRecordsVM(_teacherRepo.GetActiveStudents(teacherId), teacherId);
+
+            vm.Teacher = teacher;
+
+            vm.Subjects = ToStringLists.StringSubjects(teacher.TeacherSubjects);
+
             return View(vm);
         }
     }

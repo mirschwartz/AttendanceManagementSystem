@@ -19,7 +19,7 @@
             <th>Notes</th>
         </tr>
         @{ int index = -1;
-            foreach (Attendance a in Model.AbsentStudents)
+            foreach (BCAttendance a in Model.AbsentStudents)
             {
                 index++;
                 <tr>
@@ -28,14 +28,45 @@
                     <td>@a.TeacherSubject.Teacher.Title @a.TeacherSubject.Teacher.LastName</td>
                     <td>@a.StudentClass.Class.ClassName</td>
                     <td>
-                        <input type="hidden" name="attendance[@index].AttendanceId" value="@a.AttendanceId" />
-                        <input type="hidden" name="attendance[@index].TeacherSubjectId" value="@a.TeacherSubjectId" />
-                        <input type="hidden" name="attendance[@index].StudentClassId" value="@a.StudentClassId" />
+                        <input type="hidden" name="attendance[@index].BCAttendanceId" value="@a.BCAttendanceId" />
+                        <input type="hidden" name="attendance[@index].BCTeacherSubjectId" value="@a.BCTeacherSubjectId" />
+                        <input type="hidden" name="attendance[@index].BCStudentClassId" value="@a.BCStudentClassId" />
                         <input type="hidden" name="attendance[@index].Date" value="@a.Date" />
                         <input type="hidden" name="attendance[@index].Period" value="@a.Period" />
 
-                        <input type="checkbox" @(a.Status == Status.ExcusedAbsence ? "checked" : "") name="attendance[@index].Status" value="3" />
-                        <input type="hidden" name="attendance[@index].Status" value="2" />
+                        <div class="row" style="margin-right:-100px;">
+                            <label class="col-md-2">Absent:</label>
+                            <div class="form-check col-md-3">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" @(a.Status == Status.ExcusedAbsence ? "checked" : "") name="attendance[@index].Status" value="3">
+                                    Excused
+                                </label>
+                            </div>
+                            <div class="form-check col-md-4">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" @(a.Status == Status.UnexcusedAbsence ? "checked" : "") name="attendance[@index].Status" value="2">
+                                    Unexcused
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-right:-100px;">
+                            <label class="col-md-2">Late:</label>
+                            <div class="form-check col-md-3">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" @(a.Status == Status.ExcusedLateness ? "checked" : "") name="attendance[@index].Status" value="4">
+                                    Excused
+                                </label>
+                            </div>
+                            <div class="form-check col-md-4">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" @(a.Status == Status.UnexcusedLateness ? "checked" : "") name="attendance[@index].Status" value="5">
+                                    Unexcused
+                                </label>
+                            </div>
+                        </div>
+
+                        @*<input type="checkbox" @(a.Status == Status.ExcusedAbsence ? "checked" : "") name="attendance[@index].Status" value="3" />
+                        <input type="hidden" name="attendance[@index].Status" value="2" />*@
                     </td>
                     <td><textarea name="attendance[@index].notes" rows="1" class="form-control">@(a.notes == "null" ? "" : a.notes)</textarea></td>
                 </tr>

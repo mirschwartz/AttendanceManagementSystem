@@ -11,11 +11,11 @@ namespace Attendance_Management_System.ViewModels
     {
         public List<TeacherVM> Teachers { get; set; }
 
-        public TeachersVM(List<Teacher> teachers)
+        public TeachersVM(List<BCTeacher> teachers, Settings settings)
         {
             this.Teachers = new List<TeacherVM>();
 
-            foreach(Teacher t in teachers)
+            foreach(BCTeacher t in teachers)
             {
                 var absentees = 0;
                 var totalPresent = 0;
@@ -27,21 +27,24 @@ namespace Attendance_Management_System.ViewModels
 
                     foreach(var a in thisSubject.Attendances)
                     {
-                        if(a.Status == Status.ExcusedAbsence || a.Status == Status.UnexcusedAbsence)
+                        if (a.StudentClass.Class.IsActive && a.StudentClass.Student.YearStart == settings.YearStart && a.StudentClass.Student.YearEnd == settings.YearEnd)
                         {
-                            absentees++;
+                            if (a.Status == Status.ExcusedAbsence || a.Status == Status.UnexcusedAbsence)
+                            {
+                                absentees++;
+                            }
+                            else
+                            {
+                                totalPresent++;
+                            }
+                            totalClasses++;
                         }
-                        else
-                        {
-                            totalPresent++;
-                        }
-                        totalClasses++;
                     }
                 }
 
                 this.Teachers.Add(new TeacherVM
                 {
-                    TeacherId = t.TeacherId,
+                    TeacherId = t.BCTeacherId,
                     Teacher = $"{t.Title} {t.FirstName} {t.LastName}",
                     Subjects = ToStringLists.StringSubjects(t.TeacherSubjects),
                     Absentees = absentees,

@@ -39,12 +39,12 @@
                 <td>
                     <div class="row">
                         <div class="col-md-2">
-                            <button class="btn btn-edit btn-link btn-link-theme" data-teacher-id="@t.TeacherId">Edit</button>
+                            <button class="btn btn-edit btn-link btn-link-theme" data-teacher-id="@t.BCTeacherId">Edit</button>
                         </div>
                         <div class="col-md-1">
                             <form method="post" action="/Admin/ChangeTeacherActiveState">
                                 <input type="hidden" name="IsActive" value=@(t.IsActive ? "false" : "true") />
-                                <input type="hidden" name="TeacherId" value="@t.TeacherId" />
+                                <input type="hidden" name="TeacherId" value="@t.BCTeacherId" />
                                 <button class="btn btn-link btn-link-theme">@(t.IsActive ? "Mark Inactive" : "Mark Active")</button>
                             </form>
                         </div>
@@ -121,7 +121,7 @@
                 </div>
                 <div class="modal-body edit-teacher">
                     <input type="hidden" name="IsActive" id="isActive-edit" />
-                    <input type="hidden" name="teacherid" id="teacher-id" />
+                    <input type="hidden" name="BCteacherid" id="teacher-id" />
 
                     <div class="form-group">
                         <div class="control-label col-md-3"><label>Title</label></div>

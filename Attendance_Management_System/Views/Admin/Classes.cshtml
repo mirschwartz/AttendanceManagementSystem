@@ -19,7 +19,7 @@
             <th>Active</th>
             <th>More Options</th>
         </tr>
-        @foreach (Class c in Model.Classes)
+        @foreach (BCClass c in Model.Classes)
         {
             <tr>
                 <td>@c.ClassName</td>
@@ -31,14 +31,14 @@
                 <td>
                     <div class="row">
                         <div class="col-md-3">
-                            <button class="btn btn-edit btn-link btn-link-theme" data-name="@c.ClassName" data-year="@c.Year" data-id="@c.ClassId" data-active="@c.IsActive">
+                            <button class="btn btn-edit btn-link btn-link-theme" data-name="@c.ClassName" data-year="@c.Year" data-id="@c.BCClassId" data-active="@c.IsActive">
                                 <span class="glyphicon glyphicon-edit"></span> Edit
                             </button>
                         </div>
                         <div class="col-md-3">
                             <form method="post" action="/Admin/ChangeClassActiveState">
                                 <input type="hidden" name="isactive" value=@(c.IsActive ? "false" : "true") />
-                                <input type="hidden" name="classId" value="@c.ClassId" />
+                                <input type="hidden" name="classId" value="@c.BCClassId" />
                                 <button class="btn btn-link btn-link-theme">@(c.IsActive ? "Mark Inactive" : "Mark Active")</button>
                             </form>
                         </div>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <input type="hidden" id="id" name="ClassId" />
+                    <input type="hidden" id="id" name="BCClassId" />
                     <input type="hidden" id="active" name="isactive" />
 
                     <div class="row">

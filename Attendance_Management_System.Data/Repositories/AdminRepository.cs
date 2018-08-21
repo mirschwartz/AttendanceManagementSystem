@@ -18,50 +18,52 @@ namespace Attendance_Management_System.Data.Repositories
         }
 
         //Students:
-        public List<Student> GetAllStudents()
+        public List<BCStudent> GetAllStudents()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Students
+                var settings = dbContext.Settings.FirstOrDefault();
+                return dbContext.BCStudents
                     .Include(s => s.StudentClasses.Select(c => c.Attendances))
                     .Include(s => s.StudentClasses.Select(c => c.Class))
+                    .Where(s => (s.YearStart == settings.YearStart && s.YearEnd == settings.YearEnd) || (s.YearStart == 0 && s.YearEnd == 0))
                     .ToList();
             }
         }
 
-        public Student GetStudent(int studentId)
+        public BCStudent GetStudent(int studentId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Students.FirstOrDefault(s => s.StudentId == studentId);
+                return dbContext.BCStudents.FirstOrDefault(s => s.BCStudentId == studentId);
             }
         }
 
-        public int AddStudent(Student student)
+        public int AddStudent(BCStudent student)
         {
             using(var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Students.Add(student);
+                dbContext.BCStudents.Add(student);
                 dbContext.SaveChanges();
 
-                return student.StudentId;
+                return student.BCStudentId;
             }
         }
 
-        public void UpdateStudent(Student student)
+        public void UpdateStudent(BCStudent student)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Entry<Student>(student).State = EntityState.Modified;
+                dbContext.Entry<BCStudent>(student).State = EntityState.Modified;
                 dbContext.SaveChanges();
             }
         }
 
-        public void AddStudentClass(StudentClass studentClass)
+        public void AddStudentClass(BCStudentClass studentClass)
         {
             using(var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.StudentClasses.Add(studentClass);
+                dbContext.BCStudentClasses.Add(studentClass);
                 dbContext.SaveChanges();
             }
         }
@@ -70,153 +72,160 @@ namespace Attendance_Management_System.Data.Repositories
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                var studentclasses = dbContext.StudentClasses.Where(s => s.StudentId == studentId).ToList();
+                var studentclasses = dbContext.BCStudentClasses.Where(s => s.BCStudentId == studentId).ToList();
 
                 foreach(var c in studentclasses)
                 {
                     c.IsActive = false;
-                    dbContext.Entry<StudentClass>(c).State = EntityState.Modified;
+                    dbContext.Entry<BCStudentClass>(c).State = EntityState.Modified;
                     dbContext.SaveChanges();
                 }
             }
         }
 
-        public void UpdateStudentClass(int studentId, int classId)
+        public void UpdateStudentClass(int studentId, BCStudentClass studentClass)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                var alreadyExists = dbContext.StudentClasses.FirstOrDefault(s => s.StudentId == studentId && s.ClassId == classId) != null ? true : false;
+                //var alreadyExists = dbContext.StudentClasses.FirstOrDefault(s => s.StudentId == studentId && s.ClassId == classId) != null ? true : false;
 
-                if (alreadyExists)
+                if (studentClass.BCStudentClassId != 0)
                 {
-                    StudentClass studentClass = dbContext.StudentClasses.FirstOrDefault(s => s.StudentId == studentId && s.ClassId == classId);
-                    studentClass.IsActive = true;
+                    //StudentClass studentClass = dbContext.StudentClasses.FirstOrDefault(s => s.StudentId == studentId && s.ClassId == classId);
+                    //studentClass.IsActive = true;
 
-                    dbContext.Entry<StudentClass>(studentClass).State = EntityState.Modified;
+                    dbContext.Entry<BCStudentClass>(studentClass).State = EntityState.Modified;
                 }
                 else
                 {
-                    StudentClass studentClass = new StudentClass { StudentId = studentId, ClassId = classId, IsActive = true };
+                    BCStudentClass NewStudentClass = new BCStudentClass { BCStudentId = studentId, BCClassId = studentClass.BCClassId, IsActive = true };
 
-                    dbContext.StudentClasses.Add(studentClass);
+                    dbContext.BCStudentClasses.Add(NewStudentClass);
                 }
 
                 dbContext.SaveChanges();
             }
         }
 
-        public List<int> GetStudentClasses(int studentId)
+        public List<BCStudentClass> GetStudentClasses(int studentId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.StudentClasses
-                    .Where(s => s.StudentId == studentId && s.IsActive)
-                    .Select(s => s.ClassId)
+                return dbContext.BCStudentClasses
+                    .Where(s => s.BCStudentId == studentId)
                     .ToList();
             }
         }
 
         //Classes
-        public List<Class> GetAllClasses()
+        public List<BCClass> GetAllClasses()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Classes.ToList();
+                return dbContext.BCClasses.ToList();
             }
         }
 
-        public List<Class> GetActiveClasses()
+        public List<BCClass> GetActiveClasses()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Classes.Where(c => c.IsActive).ToList();
+                return dbContext.BCClasses.Where(c => c.IsActive).ToList();
             }
         }
 
-        public Class GetClass(int classId)
+        public BCClass GetClass(int classId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Classes.FirstOrDefault(c => c.ClassId == classId);
+                return dbContext.BCClasses.FirstOrDefault(c => c.BCClassId == classId);
             }
         }
 
-        public void AddClass(Class c)
+        public void AddClass(BCClass c)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Classes.Add(c);
+                dbContext.BCClasses.Add(c);
                 dbContext.SaveChanges();
             }
         }
 
-        public void UpdateClass(Class c)
+        public void UpdateClass(BCClass c)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Entry<Class>(c).State = EntityState.Modified;
+                dbContext.Entry<BCClass>(c).State = EntityState.Modified;
                 dbContext.SaveChanges();
             }
         }
 
         //Teachers
-        public List<Teacher> GetAllTeachers()
+        public List<BCTeacher> GetAllTeachers()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Teachers.Include(t => t.TeacherSubjects).ToList();
+                return dbContext.BCTeachers.Include(t => t.TeacherSubjects).ToList();
             }
         }
 
-        public Teacher GetTeacherWithSubjects(int teacherId)
+        public BCTeacher GetTeacherWithSubjects(int teacherId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Teachers
+                return dbContext.BCTeachers
                     .Include(t => t.TeacherSubjects)
-                    .FirstOrDefault(t => t.TeacherId == teacherId);
+                    .FirstOrDefault(t => t.BCTeacherId == teacherId);
             }
         }
 
-        public Teacher GetTeacher(int teacherId)
+        public BCTeacher GetTeacher(int teacherId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Teachers.FirstOrDefault(t => t.TeacherId == teacherId);
+                return dbContext.BCTeachers.FirstOrDefault(t => t.BCTeacherId == teacherId);
             }
         }
 
-        public List<TeacherSubject> GetTeacherSubjects(int teacherId)
+        public List<BCTeacherSubject> GetTeacherSubjects(int teacherId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.TeacherSubjects.Where(t => t.TeacherId == teacherId).ToList();
+                return dbContext.BCTeacherSubjects.Where(t => t.BCTeacherId == teacherId).ToList();
             }
         }
 
-        public void AddTeacher(Teacher teacher)
+        public List<BCTeacherSubject> GetActiveTeacherSubjects()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Teachers.Add(teacher);
+                return dbContext.BCTeacherSubjects.Where(t => t.IsActive).Include(t => t.Teacher).ToList();
+            }
+        }
+
+        public void AddTeacher(BCTeacher teacher)
+        {
+            using (var dbContext = new AttendanceSystemDB(_connectionString))
+            {
+                dbContext.BCTeachers.Add(teacher);
                 dbContext.SaveChanges();
             }
         }
 
-        public void AddTeacherSubject (TeacherSubject subject)
+        public void AddTeacherSubject (BCTeacherSubject subject)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.TeacherSubjects.Add(subject);
+                dbContext.BCTeacherSubjects.Add(subject);
                 dbContext.SaveChanges();
             }
         }
 
-        public void UpdateTeacher(Teacher teacher)
+        public void UpdateTeacher(BCTeacher teacher)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Entry<Teacher>(teacher).State = EntityState.Modified;
+                dbContext.Entry<BCTeacher>(teacher).State = EntityState.Modified;
                 dbContext.SaveChanges();
             }
         }
@@ -225,38 +234,70 @@ namespace Attendance_Management_System.Data.Repositories
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                var teacherSubjects = dbContext.TeacherSubjects.Where(t => t.TeacherId == teacherId).ToList();
+                var teacherSubjects = dbContext.BCTeacherSubjects.Where(t => t.BCTeacherId == teacherId).ToList();
 
                 foreach (var s in teacherSubjects)
                 {
                     s.IsActive = false;
-                    dbContext.Entry<TeacherSubject>(s).State = EntityState.Modified;
+                    dbContext.Entry<BCTeacherSubject>(s).State = EntityState.Modified;
                     dbContext.SaveChanges();
                 }
             }
         }
 
-        public void UpdateTeacherSubjects(int teacherId, TeacherSubject subject)
+        public void UpdateTeacherSubjects(int teacherId, BCTeacherSubject subject)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                //var alreadyExists = dbContext.TeacherSubjects.FirstOrDefault(s => s.TeacherId == teacherId && s.Subject == subject) != null ? true : false;
-
-                if (subject.TeacherSubjectId != 0)
+                if (subject.BCTeacherSubjectId != 0)
                 {
-                    //TeacherSubject teacherSubject = dbContext.TeacherSubjects.FirstOrDefault(s => s.TeacherId == teacherId && s.Subject == subject);
-                    //teacherSubject.IsActive = true;
-
-                    dbContext.Entry<TeacherSubject>(subject).State = EntityState.Modified;
+                    dbContext.Entry<BCTeacherSubject>(subject).State = EntityState.Modified;
                 }
                 else
                 {
-                    TeacherSubject teacherSubject = new TeacherSubject { TeacherId = teacherId, Subject = subject.Subject, IsActive = true };
+                    BCTeacherSubject teacherSubject = new BCTeacherSubject { BCTeacherId = teacherId, Subject = subject.Subject, IsActive = true };
 
-                    dbContext.TeacherSubjects.Add(teacherSubject);
+                    dbContext.BCTeacherSubjects.Add(teacherSubject);
                 }
 
                 dbContext.SaveChanges();
+            }
+        }
+
+        //SCHEDULE
+
+        public List<BCSchedule> GetSchedule(int classId)
+        {
+            using (var dbContext = new AttendanceSystemDB(_connectionString))
+            {
+                return dbContext.BCSchedule.Where(s => s.BCClassId == classId).ToList();
+            }
+        }
+
+        public List<BCSchedule> GetDailySchedule(int classId, DayOfWeek day)
+        {
+            using (var dbContext = new AttendanceSystemDB(_connectionString))
+            {
+                return dbContext.BCSchedule.Where(s => s.BCClassId == classId && s.DayOfWeek == day).ToList();
+            }
+        }
+
+        public void AddSchedule(List<BCSchedule> schedule)
+        {
+            using(var dbContext = new AttendanceSystemDB(_connectionString))
+            {
+                dbContext.BCSchedule.AddRange(schedule);
+
+                dbContext.SaveChanges();
+            }
+        }
+
+        public void DeleteSchedule(int classId, DayOfWeek day)
+        {
+            using (var dbContext = new AttendanceSystemDB(_connectionString))
+            {
+                dbContext.Database.ExecuteSqlCommand("DELETE FROM BCSchedules WHERE DayOfWeek = {0} and BCClassId = {1}",
+                    day, classId);
             }
         }
     }

@@ -35,18 +35,16 @@ namespace Attendance_Management_System.Controllers
         {
             var user = _userService.Login(userName, password);
 
-            if (user == null || verify != "whatever")
+            if (user == null || verify != "whatever" || (user.UserId != 1 && user.UserId != 3))
             {
                 TempData["Message"] = "Username or password is incorrect!";
-                return Redirect("/user/signin");
+                return Redirect("/User/Signin");
             }
-            else if(user.SubDomain != null && user.SubDomain != "")
+            else
             {
                 FormsAuthentication.SetAuthCookie(userName, true);
-                return Redirect($"http://{user.SubDomain}.{Request.Url.Host}{(Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port)}");
+                return Redirect("/");
             }
-            FormsAuthentication.SetAuthCookie(userName, true);
-            return Redirect("/");
         }
 
         public ActionResult Signout()

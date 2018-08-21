@@ -7,13 +7,16 @@
 }
 
 <div class="col-md-offset-1 col-md-10">
-    <h2>Students</h2>
+    <div class="col-md-4 col-md-offset-4">
+        <h1 style="font-size: 50px;" class="font">Students</h1>
+    </div>
 
     <table class="table table-hover table-striped table-bordered">
         <tr>
             <th>Student</th>
             <th>Classes</th>
             <th>Total Absences</th>
+            <th>Total Latenesses</th>
             <th>Over-all Attendance</th>
         </tr>
         @foreach(var s in Model.Students)
@@ -22,6 +25,7 @@
                 <td><a href="/Student/StudentRecord?studentId=@s.StudentId">@s.Name</a></td>
                 <td>@s.Class</td>
                 <td>@s.TotalAbsences</td>
+                <td>@s.TotalLatenesses</td>
                 <td>@s.Percentage%</td>
             </tr>
         }

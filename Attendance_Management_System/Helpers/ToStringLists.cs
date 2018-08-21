@@ -8,7 +8,7 @@ namespace Attendance_Management_System.Helpers
 {
     public class ToStringLists
     {
-        public static string StringClasses(ICollection<StudentClass> studentClasses)
+        public static string StringClasses(ICollection<BCStudentClass> studentClasses)
         {
             string classes = "";
 
@@ -25,7 +25,7 @@ namespace Attendance_Management_System.Helpers
             return classes;
         }
 
-        public static string StringSubjects(ICollection<TeacherSubject> teacherSubjects)
+        public static string StringSubjects(ICollection<BCTeacherSubject> teacherSubjects)
         {
             var subjects = "";
             for (int s = 0; s < teacherSubjects.Count; s++)

@@ -8,7 +8,9 @@
 
 <div class="col-md-offset-1 col-md-10">
 
-    <h2>Teachers</h2>
+    <div class="col-md-4 col-md-offset-4">
+        <h1 style="font-size: 50px;" class="font">Teachers</h1>
+    </div>
 
     <table class="table table-hover table-striped table-bordered">
         <tr>
@@ -20,7 +22,10 @@
         @foreach (var t in Model.Teachers)
         {
             <tr>
-                <td><a href="/Teacher/TeacherRecord?teacherId=@t.TeacherId">@t.Teacher</a></td>
+                <td>
+                    <a href="/Teacher/TeacherRecord?teacherId=@t.TeacherId">@t.Teacher</a>&emsp;
+                    <a href="/Teacher/NewTeacherRecord?teacherId=@t.TeacherId">New View</a>
+                </td>
                 <td>@t.Subjects</td>
                 <td>@t.Absentees</td>
                 <td>@t.Percentage%</td>

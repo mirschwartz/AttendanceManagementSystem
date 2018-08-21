@@ -8,13 +8,13 @@ namespace Attendance_Management_System.ViewModels
 {
     public class ReportsVM
     {
-        public List<Student> Students { get; set; }
+        public List<BCStudent> Students { get; set; }
 
-        public List<Teacher> Teachers { get; set; }
+        public List<BCTeacher> Teachers { get; set; }
 
-        public List<Class> Classes { get; set; }
+        public List<BCClass> Classes { get; set; }
 
-        public List<Attendance> Attendances { get; set; }
+        public List<BCAttendance> Attendances { get; set; }
 
         public int ClassId { get; set; }
 

@@ -15,6 +15,8 @@ namespace Attendance_Management_System.ViewModels
 
         public int TotalAbsences { get; set; }
 
+        public int TotalLatenesses { get; set; }
+
         public double Percentage { get; set; }
     }
 }

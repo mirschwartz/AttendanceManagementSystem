@@ -22,32 +22,34 @@ namespace Attendance_Management_System.Services
             _adminRepo = new AdminRepository(connectionString);
         }
 
-        public void AddStudent(Student student, List<int> classIds)
+        public void AddStudent(BCStudent student, List<BCStudentClass> classIds)
         {
-            classIds = classIds.Where(c => c != 0).ToList();
+            classIds = classIds.Where(c => c.BCClassId != 0).ToList();
 
             var studentId = _adminRepo.AddStudent(student);
 
             foreach(var c in classIds)
             {
-                _adminRepo.AddStudentClass(new StudentClass { StudentId = studentId, ClassId = c, IsActive = true });
+                c.BCStudentId = studentId;
+                c.IsActive = true;
+                _adminRepo.AddStudentClass(c);
             }
         }
 
-        public void EditStudent(Student student, List<int> classId)
+        public void EditStudent(BCStudent student, List<BCStudentClass> classId)
         {
-            classId = classId.Where(c => c != 0).ToList();
+            classId = classId.Where(c => c.BCClassId != 0).ToList();
             _adminRepo.UpdateStudent(student);
 
-            _adminRepo.MarkStudentClassesInactive(student.StudentId);
+            _adminRepo.MarkStudentClassesInactive(student.BCStudentId);
 
-            foreach (int c in classId)
+            foreach (var c in classId)
             {
-                _adminRepo.UpdateStudentClass(student.StudentId, c);
+                _adminRepo.UpdateStudentClass(student.BCStudentId, c);
             }
         }
 
-        public void ChangeStudentActiveState(int studentId, Action<Student> action)
+        public void ChangeStudentActiveState(int studentId, Action<BCStudent> action)
         {
             var thisStudent = _adminRepo.GetStudent(studentId);
             if(thisStudent != null)
@@ -57,7 +59,7 @@ namespace Attendance_Management_System.Services
             }
         }
 
-        public void ChangeClassActiveState(int classId, Action<Class> action)
+        public void ChangeClassActiveState(int classId, Action<BCClass> action)
         {
             var thisClass = _adminRepo.GetClass(classId);
             if (thisClass != null)
@@ -67,7 +69,7 @@ namespace Attendance_Management_System.Services
             }
         }
 
-        public void ChangeTeacherActiveState(int teacherId, Action<Teacher> action)
+        public void ChangeTeacherActiveState(int teacherId, Action<BCTeacher> action)
         {
             var thisTeacher = _adminRepo.GetTeacherWithSubjects(teacherId);
             if (thisTeacher != null)
@@ -77,7 +79,7 @@ namespace Attendance_Management_System.Services
             }
         }
 
-        public void AddTeacher(Teacher teacher)
+        public void AddTeacher(BCTeacher teacher)
         {
             if(teacher.TeacherSubjects != null)
             {
@@ -90,19 +92,33 @@ namespace Attendance_Management_System.Services
             _adminRepo.AddTeacher(teacher);
         }
 
-        public void UpdateTeacher(Teacher teacher, List<TeacherSubject> subjects)
+        public void UpdateTeacher(BCTeacher teacher, List<BCTeacherSubject> subjects)
         {
             //var teacherId = teacher.TeacherId;
             subjects = subjects.Where(s => s.Subject != null && s.Subject != "").ToList();
 
             _adminRepo.UpdateTeacher(teacher);
 
-            _adminRepo.MarkTeacherSubjectsInactive(teacher.TeacherId);
+            _adminRepo.MarkTeacherSubjectsInactive(teacher.BCTeacherId);
 
             foreach (var subject in subjects)
             {
-                _adminRepo.UpdateTeacherSubjects(teacher.TeacherId, subject);
+                _adminRepo.UpdateTeacherSubjects(teacher.BCTeacherId, subject);
             }
+        }
+
+        public void AddSchedule(List<BCSchedule> schedule)
+        {
+            schedule = schedule.Where(s => s.BCTeacherSubjectId != 0).ToList();
+
+            _adminRepo.AddSchedule(schedule);
+        }
+
+
+        public void UpdateSchedule(List<BCSchedule> schedule, DayOfWeek day, int classId)
+        {
+            _adminRepo.DeleteSchedule(classId, day);
+            AddSchedule(schedule);
         }
     }
 }

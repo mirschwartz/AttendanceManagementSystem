@@ -17,11 +17,11 @@ namespace Attendance_Management_System.Data.Repositories
             _connectionString = connectionString;
         }
 
-        public List<Attendance> GetLatenesses()
+        public List<BCAttendance> GetLatenesses()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Attendances
+                return dbContext.BCAttendances
                     .Include(a => a.StudentClass.Student)
                     .Where(a => a.Status == Status.UnexcusedLateness || a.Status == Status.ExcusedLateness)
                     .ToList();

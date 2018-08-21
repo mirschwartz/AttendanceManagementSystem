@@ -8,6 +8,6 @@ namespace Attendance_Management_System.ViewModels
 {
     public class LatenessVM
     {
-        public List<Attendance> Latenesses { get; set; }
+        public List<BCAttendance> Latenesses { get; set; }
     }
 }

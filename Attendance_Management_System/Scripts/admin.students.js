@@ -53,6 +53,8 @@
         $('#city').val('');
         $('#state').val('');
         $('#zip').val('');
+        $('#yearStart').val('');
+        $('#yearEnd').val('');
     });
 
     $('#btn-show-active').on('click', function () {
@@ -94,11 +96,11 @@
             if (sc.StudentClasses.length === 0) {
                 html = FormClassesDropdown();
             } else {
-                sc.StudentClasses.forEach(function (id) {
+                sc.StudentClasses.forEach(function (studentClass) {
                     if (PersonClassIndex == 0) {
-                        html = FormClassesDropdown(id);
+                        html = FormClassesDropdown(studentClass);
                     } else {
-                        html += FormClassesDropdown(id);
+                        html += FormClassesDropdown(studentClass);
                     }
                 })
             }
@@ -112,6 +114,8 @@
             $('#state-edit').val(sc.Student.State);
             $('#zip-edit').val(sc.Student.Zip);
             $('#isActive').val(sc.Student.IsActive)
+            $('#yearStart-edit').val(sc.Student.YearStart)
+            $('#yearEnd-edit').val(sc.Student.YearEnd)
 
             $('#classes-div-edit').empty();
             $('#classes-div-edit').append(html);
@@ -144,7 +148,7 @@
         VerifyEditStudentModalInput();
     })
 
-    var addArray = ['#first-name', '#last-name', '#home-phone', '#cell-phone', '#address1', '#address2', '#city', '#state', '#zip'];
+    var addArray = ['#first-name', '#last-name', '#home-phone', '#cell-phone', '#address1', '#address2', '#city', '#state', '#zip','#yearStart','#yearEnd'];
     addArray.forEach(function (input) {
         $(input).on('keyup', function () {
             if ($('#first-name').val() && $('#last-name').val()) {
@@ -155,7 +159,7 @@
         })
     })
 
-    var editArray = ['#first-name-edit', '#last-name-edit', '#cell-phone-edit', '#home-phone-edit', '#address1-edit', '#address2-edit', '#city-edit', '#state-edit', '#zip-edit'];
+    var editArray = ['#first-name-edit', '#last-name-edit', '#cell-phone-edit', '#home-phone-edit', '#address1-edit', '#address2-edit', '#city-edit', '#state-edit', '#zip-edit','#yearStart-edit','#yearEnd-edit'];
     editArray.forEach(function (input) {
         $(input).on('keyup', function () {
             VerifyEditStudentModalInput();
@@ -166,29 +170,53 @@
         VerifyEditStudentModalInput();
     })
 
+    $('.students-classes').on('change', '.isActiveCheckbox', function () {
+        VerifyEditStudentModalInput();
+    })
+
     function VerifyEditStudentModalInput() {
         var firstName = $('#first-name-edit').val();
         var lastName = $('#last-name-edit').val();
         if (firstName && lastName) {
             $('#btn-save-changes').removeAttr('disabled');
+
+            $('#first-name-edit-div').removeClass('has-error');
+            $('#last-name-edit-div').removeClass('has-error');
         } else {
+            if (!firstName) {
+                $('#first-name-edit-div').addClass('has-error');
+            }
+            if (!lastName) {
+                $('#last-name-edit-div').addClass('has-error');
+            }
             $('#btn-save-changes').attr('disabled', true);
         }
     }
 
     function FormClassesDropdown(selectedClass) {
-        var html = `<div class="form-group classnum${PersonClassIndex}"><div class="control-label col-md-3"><label>Class</label></div><div class="col-md-7 input-group" style="margin-bottom: 5px;">` +
-                    `<select name="classId[${PersonClassIndex}]" class="form-control class-dropdown" >` +
+
+        var html = `<div class="form-group classnum${PersonClassIndex}"><div class="control-label col-md-3"><label>Class</label></div>` +
+                    `<div class="col-md-7 input-group" style="margin-bottom: 5px;">` +
+                    `<select name="classId[${PersonClassIndex}].BCClassId" class="form-control class-dropdown" >` +
                     `<option value="0">Select a Class..........</option>`;
+
         classes.forEach(function (classIndex) {
-            html += `<option ${selectedClass === classIndex.ClassId ? 'selected' : ''} value="${classIndex.ClassId}">${classIndex.ClassName} - ${classIndex.Year}</option>`;
+            html += `<option ${selectedClass && selectedClass.BCClassId === classIndex.BCClassId ? 'selected' : ''} value="${classIndex.BCClassId}">${classIndex.ClassName} - ${classIndex.Year}</option>`;
         })
-        html += `</select>`;
-        if (PersonClassIndex != 0) {
-            html += `<span class="input-group-btn classnum${PersonClassIndex}"><button type="button" data-class-num="${PersonClassIndex}" class="btn remove-class"><span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button></span></div></div>`;
+        if (PersonClassIndex != 0 && !selectedClass) {
+            html += `</select><span class="input-group-btn classnum${PersonClassIndex}"><button type="button" data-class-num="${PersonClassIndex}" class="btn remove-class">` +
+                    `<span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button></span></div></div>`;
         } else {
-            html += `</div></div>`;
+            html += `</select></div></div>`;
         }
+
+        if (selectedClass) {
+            html += `<input type="checkbox" class="isActiveCheckbox" name="classId[${PersonClassIndex}].IsActive" value="true" ${selectedClass.IsActive ? 'checked' : ''} /> Active` +
+                    `<input type="hidden" name="classId[${PersonClassIndex}].IsActive" value="false"/></div>` +
+                    `<input type="hidden" name="classId[${PersonClassIndex}].BCStudentClassId" value="${selectedClass.BCStudentClassId}" />` +
+                    `<input type="hidden" name="classId[${PersonClassIndex}].BCStudentId" value="${selectedClass.BCStudentId}" />`
+        }
+
         PersonClassIndex++;
         return html;
     }

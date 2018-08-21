@@ -6,37 +6,47 @@
     ViewBag.Description = "Submit and update attendance sheet";
 }
 
-<ul class="pager">
-    <li class="previous">
+<div id="printable-form" style="margin-top: -80px; margin-bottom: -40px;"></div>
+
+<div class="row" id="instructions">
+    <h4 style="color: #CC7F4F; margin-left: 15px;">Check off all absences and latenesses</h4>
+</div>
+
+<div class="row" style="margin-bottom: 40px; margin-right:10px;">
+    <div class="col-md-1 col-md-offset-5">
         <button class="pager-btn btn btn-link btn-link-theme" id="btn-previous" data-btn="previous">
             <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
             Previous
         </button>
-    </li>
-    <li class="next">
+    </div>
+    <div class="col-md-1">
         <button class="pager-btn btn btn-link btn-link-theme" id="btn-next" data-btn="next">
             Next
             <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
         </button>
-    </li>
-</ul>
+    </div>
+    <button class="btn btn-theme pull-right" id="print">Print</button>
+</div>
 
 <form method="post" id="form" action="/Attendance/MarkAttendance">
 
-    <div class="row" style="margin-bottom: 20px;">
+    <div class="row" id="class-info" style="margin-bottom: 20px;">
         <div class="col-md-2">
             <select id="sort-class" class="form-control" name="classId">
                 <option value="0">Select a Class......</option>
                 @foreach (var c in Model.Classes)
                 {
-                    <option value="@c.ClassId">@c.ClassName - @c.Year</option>
+                    <option value="@c.BCClassId">@c.ClassName - @c.Year @c.BCClassId</option>
                 }
             </select>
         </div>
         <div class="col-md-2">
             <input type="text" name="date" id="datepicker" class="form-control" placeholder="Date" />
         </div>
-        <div class="col-md-4 col-md-offset-4">
+        <div class="col-md-2">
+            <span id="label" style="color: #CC7F4F">Select class and date</span>
+        </div>
+        <div class="col-md-4 col-md-offset-2">
             <button type="button" class="btn btn-theme" id="add-column" disabled>Add Class</button>
             <button type="button" class="btn btn-theme" id="delete-column" disabled>Remove Class</button>
         </div>
@@ -45,13 +55,13 @@
     <table class="table table-condensed table-hover table-striped table-bordered table-attendance">
         <tr>
             <th width="15%">First Name</th>
-            <th width="10%">Last Name</th>
-            <th>
-                <select style="padding-left:1px; padding-right:1px; font-size: 8pt;" name="Teacher[0].TeacherSubjectId" class="form-control">
+            <th width="9%">Last Name</th>
+            <th class="teachers">
+                <select style="padding-left:1px; padding-right:1px; font-size: 8pt;" name="Teacher[0].BCTeacherSubjectId" class="form-control">
                     <option value="0">Select a Teacher...</option>
                     @foreach (var t in Model.Subjects)
                     {
-                        <option value="@t.TeacherSubjectId">@t.Teacher.Title @t.Teacher.LastName - @t.Subject</option>
+                        <option value="@t.BCTeacherSubjectId">@t.Subject - @t.Teacher.Title @t.Teacher.LastName</option>
                     }
                 </select>
             </th>

@@ -27,10 +27,10 @@ namespace Attendance_Management_System.Controllers
             vm.Teachers = _ReportsRepo.GetAllTeachers();
             vm.Students = _ReportsRepo.GetAllStudents();
             vm.Classes = _ReportsRepo.GetAllClasses();
-            vm.Attendances = new List<Attendance>();
+            vm.Attendances = new List<BCAttendance>();
 
             if(classId.HasValue || student.HasValue || teacher.HasValue || date.HasValue || status.HasValue){
-                vm.Attendances = _ReportsRepo.GetReport(classId, student, teacher, date, status).OrderBy(a => a.Date).ToList();
+                vm.Attendances = _ReportsRepo.GetReport(classId, student, teacher, date, status).OrderBy(a => a.Date).OrderBy(a => a.StudentClass.Student.FirstName).ToList();
                 vm.ClassId = classId.Value;
                 vm.Student = student.Value;
                 vm.Teacher = teacher.Value;

@@ -36,58 +36,61 @@ namespace Attendance_Management_System.Services
             return null;
         }
 
-        public void MarkAttendance(List<List<Attendance>> Class, List<TeacherSubject> teacher, DateTime date, int classId)
+        public void MarkAttendance(List<List<BCAttendance>> Class, List<BCTeacherSubject> teacher, DateTime date, int classId)
         {
             int index = 0;
-            List<Attendance> masterList = new List<Attendance>();
+            List<BCAttendance> masterList = new List<BCAttendance>();
 
-            foreach (List<Attendance> attendance in Class)
+            foreach (List<BCAttendance> attendance in Class)
             {
-                int id = teacher[index].TeacherSubjectId;
-                foreach (Attendance status in attendance)
+                int id = teacher[index].BCTeacherSubjectId;
+                foreach (BCAttendance status in attendance)
                 {
-                    status.TeacherSubjectId = id;
+                    status.BCTeacherSubjectId = id;
                     status.Date = date;
                     masterList.Add(status);
                 }
                 index++;
             }
 
-            masterList = masterList.Where(a => a.TeacherSubjectId != 0).ToList();
+            masterList = masterList.Where(a => a.BCTeacherSubjectId != 0).ToList();
 
             _attendanceRepo.AddAttendance(masterList);
         }
 
-        public void UpdateAttendance(DateTime date, int classId, List<List<Attendance>> attendance, List<TeacherSubject> teacher)
+        public void UpdateAttendance(DateTime date, int classId, List<List<BCAttendance>> attendance, List<BCTeacherSubject> teacher)
         {
             _attendanceRepo.DeleteDaysAttendance(date, classId);
 
             int index = 0;
-            List<Attendance> masterList = new List<Attendance>();
+            List<BCAttendance> masterList = new List<BCAttendance>();
 
-            foreach (List<Attendance> a in attendance)
+            foreach (List<BCAttendance> a in attendance)
             {
-                int id = teacher[index].TeacherSubjectId;
+                int id = teacher[index].BCTeacherSubjectId;
 
-                foreach (Attendance status in a)
+                foreach (BCAttendance status in a)
                 {
-                    status.TeacherSubjectId = id;
+                    status.BCTeacherSubjectId = id;
                     status.Date = date;
                     masterList.Add(status);
                 }
                 index++;
             }
 
-            masterList = masterList.Where(a => a.TeacherSubjectId != 0).ToList();
+            masterList = masterList.Where(a => a.BCTeacherSubjectId != 0).ToList();
 
             _attendanceRepo.AddAttendance(masterList);
         }
 
-        public void ExcuseAbsentees(List<Attendance> attendance)
+        public void ExcuseAbsentees(List<BCAttendance> attendance)
         {
-            foreach (Attendance a in attendance)
+            if(attendance != null)
             {
-                _attendanceRepo.UpdateAttendance(a);
+                foreach (BCAttendance a in attendance)
+                {
+                    _attendanceRepo.UpdateAttendance(a);
+                }
             }
         }
     }

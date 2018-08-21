@@ -14,16 +14,16 @@
 
     <select class="form-control" id="filter-class" style="margin-top: 5px;">
         <option value="0">Sort By Class..........</option>
-        @foreach (Class c in Model.Classes)
+        @foreach (BCClass c in Model.Classes)
         {
-            <option value="@c.ClassId">@c.ClassName - @c.Year</option>
+            <option value="@c.BCClassId">@c.ClassName - @c.Year</option>
         }
     </select>
 
     <table class="table table-hover table-striped table-bordered" style="margin-top: 5px;">
         <tr>
-            <th>First Name</th>
             <th>Last Name</th>
+            <th>First Name</th>
             <th>Class</th>
             <th>Active</th>
             <th>More Options</th>
@@ -31,12 +31,12 @@
         @foreach (var s in Model.Students)
         {
             <tr>
-                <td>@s.FirstName</td>
                 <td>@s.LastName</td>
+                <td>@s.FirstName</td>
                 <td>
                     @foreach (var sc in s.StudentClasses)
                     {
-                        <input type="hidden" value="@sc.ClassId" />
+                        <input type="hidden" value="@sc.BCClassId" />
                         <span @Html.Raw(!sc.IsActive ? "style='color: #CC7F4F'" : "")> @sc.Class.ClassName-@sc.Class.Year @(sc != s.StudentClasses.Last() ? "," : "")</span>
                     }
 
@@ -48,14 +48,14 @@
                 <td>
                     <div class="row">
                         <div class="col-md-3">
-                            <button class="btn btn-edit btn-link btn-link-theme" data-id="@s.StudentId">
+                            <button class="btn btn-edit btn-link btn-link-theme" data-id="@s.BCStudentId">
                                 <span class="glyphicon glyphicon-edit"></span> Edit
                             </button>
                         </div>
                         <div class="col-md-3">
                             <form method="post" action="/Admin/changeStudentActiveState">
                                 <input type="hidden" name="isactive" value=@(s.IsActive ? "false" : "true") />
-                                <input type="hidden" name="studentId" value="@s.StudentId" />
+                                <input type="hidden" name="studentId" value="@s.BCStudentId" />
                                 <button class="btn btn-link btn-link-theme">@(s.IsActive ? "Mark Inactive" : "Mark Active")</button>
                             </form>
                         </div>
@@ -122,7 +122,15 @@
                         <div class="control-label col-md-3"><label>Zip Code</label></div>
                         <div class="col-md-9"><input type="text" id="zip" name="zip" class="form-control" style="margin-bottom: 5px;" /></div>
                     </div>
-                    
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>School Year</label></div>
+                        <div class="col-md-9">
+                            <input type="text" id="yearStart" name="yearStart" class="form-control" style="margin-bottom: 5px;" />
+                            <input type="text" id="yearEnd" name="yearEnd" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
+                    </div>
+
                     <div id="classes-div-new" class="students-classes">
 
                     </div>
@@ -150,17 +158,17 @@
                 </div>
                 <div class="modal-body">
 
-                    <input type="hidden" name="StudentId" id="student-id">
+                    <input type="hidden" name="BCStudentId" id="student-id">
                     <input type="hidden" name="IsActive" id="isActive" />
 
                     <div class="form-group">
                         <div class="control-label col-md-3"><label>First Name</label></div>
-                        <div class="col-md-9"><input type="text" id="first-name-edit" name="firstName" class="form-control" style="margin-bottom: 5px;" /></div>
+                        <div class="col-md-9" id="first-name-edit-div"><input type="text" id="first-name-edit" name="firstName" class="form-control" style="margin-bottom: 5px;" /></div>
                     </div>
 
                     <div class="form-group">
                         <div class="control-label col-md-3"><label>Last Name</label></div>
-                        <div class="col-md-9"><input type="text" id="last-name-edit" name="lastName" class="form-control" style="margin-bottom: 5px;" /></div>
+                        <div class="col-md-9" id="last-name-edit-div"><input type="text" id="last-name-edit" name="lastName" class="form-control" style="margin-bottom: 5px;" /></div>
                     </div>
 
                     <div class="form-group">
@@ -196,6 +204,14 @@
                     <div class="form-group">
                         <div class="control-label col-md-3"><label>Zip Code</label></div>
                         <div class="col-md-9"><input type="text" id="zip-edit" name="zip" class="form-control" style="margin-bottom: 5px;" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-label col-md-3"><label>School Year</label></div>
+                        <div class="col-md-9">
+                            <input type="text" id="yearStart-edit" name="yearStart" class="form-control" style="margin-bottom: 5px;" />
+                            <input type="text" id="yearEnd-edit" name="yearEnd" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
                     </div>
 
                     <div id="classes-div-edit" class="students-classes">

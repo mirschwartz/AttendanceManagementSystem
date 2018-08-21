@@ -182,15 +182,17 @@
     }
 
     function AddSubjectEdit(subject) {
-        var html = `<div class="form-group subjectnum${editSubjectRow}"><div class="col-md-3 control-label"><label>Subject</label></div>` +
+        var html =  `<div class="form-group subjectnum${editSubjectRow}"><div class="col-md-3 control-label"><label>Subject</label></div>` +
                     `<div class="col-md-7 input-group" style="margin-bottom: 5px;">` +
-                    `<input type="text" name="subjects[${editSubjectRow - 1}].Subject" ${subject != null ? `value='${subject.Subject}'` : ''} class="form-control subject-edit" />` +
-                    `<span class="input-group-btn"><button type="button" data-row="${editSubjectRow}" class="btn remove-subject"><span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button></span></div>`;
-        if (subject != null) {
-            html += `Active <input type="checkbox" id="isActiveCheckbox" name="subjects[${editSubjectRow - 1}].IsActive" value="true" ${subject.IsActive ? 'checked' : ''} />` +
-                `<input type="hidden" name="subjects[${editSubjectRow - 1}].IsActive" value="false"/>` +
-                `<input type="hidden" name="subjects[${editSubjectRow - 1}].TeacherSubjectId" value="${subject.TeacherSubjectId}" />` +
-                `<input type="hidden" name="subjects[${editSubjectRow - 1}].TeacherId" value="${subject.TeacherId}" />`
+                    `<input type="text" name="subjects[${editSubjectRow - 1}].Subject" ${subject != null ? `value='${subject.Subject}'` : ''} class="form-control subject-edit" />`;
+        if (subject == null) {
+            html += `<span class="input-group-btn"><button type="button" data-row="${editSubjectRow}" class="btn remove-subject">` +
+                    `<span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button></span></div>`;
+        } else {
+            html += `</div><input type="checkbox" id="isActiveCheckbox" name="subjects[${editSubjectRow - 1}].IsActive" value="true" ${subject.IsActive ? 'checked' : ''} /> Active` +
+                    `<input type="hidden" name="subjects[${editSubjectRow - 1}].IsActive" value="false"/>` +
+                    `<input type="hidden" name="subjects[${editSubjectRow - 1}].BCTeacherSubjectId" value="${subject.BCTeacherSubjectId}" />` +
+                    `<input type="hidden" name="subjects[${editSubjectRow - 1}].BCTeacherId" value="${subject.BCTeacherId}" />`
         }
         html += `</div>`
 

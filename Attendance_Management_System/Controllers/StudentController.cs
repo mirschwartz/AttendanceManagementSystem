@@ -1,4 +1,5 @@
-﻿using Attendance_Management_System.Data.Repositories;
+﻿using Attendance_Management_System.Data.Models;
+using Attendance_Management_System.Data.Repositories;
 using Attendance_Management_System.Helpers;
 using Attendance_Management_System.Services;
 using Attendance_Management_System.ViewModels;
@@ -41,6 +42,12 @@ namespace Attendance_Management_System.Controllers
             };
 
             return View(vm);
+        }
+
+        [HttpPost]
+        public void EditStudentRecord(BCAttendance record)
+        {
+            _studentRepo.EditRecord(record);
         }
     }
 }

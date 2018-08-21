@@ -8,10 +8,10 @@ namespace Attendance_Management_System.ViewModels
 {
     public class StudentRecordVM
     {
-        public Student Student { get; set; }
+        public BCStudent Student { get; set; }
 
         public string Classes { get; set; }
 
-        public List<Data.Models.Attendance> Attendance { get; set; }
+        public List<Data.Models.BCAttendance> Attendance { get; set; }
     }
 }

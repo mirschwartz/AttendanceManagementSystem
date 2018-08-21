@@ -29,27 +29,29 @@ namespace Attendance_Management_System.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult Students()
         {
             AdminStudentsVM vm = new AdminStudentsVM()
             {
                 Classes = _adminRepo.GetAllClasses(),
-                Students = _adminRepo.GetAllStudents()                
+                Students = _adminRepo.GetAllStudents().OrderBy(s => s.LastName).ToList()
             };
 
             return View(vm);
         }
 
         [HttpPost]
-        public ActionResult NewStudent(Student student, List<int> classId)
+        public ActionResult NewStudent(BCStudent student, List<BCStudentClass> classId)
         {
             _adminService.AddStudent(student, classId);
 
             return Redirect("/admin/students");
         }
 
+
         [HttpPost]
-        public ActionResult UpdateStudent(Student student, List<int> classId)
+        public ActionResult UpdateStudent(BCStudent student, List<BCStudentClass> classId)
         {
             _adminService.EditStudent(student, classId);
 
@@ -83,7 +85,7 @@ namespace Attendance_Management_System.Controllers
         }
 
         [HttpPost]
-        public ActionResult NewTeacher(Teacher teacher)
+        public ActionResult NewTeacher(BCTeacher teacher)
         {
             _adminService.AddTeacher(teacher);
 
@@ -91,7 +93,7 @@ namespace Attendance_Management_System.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditTeacher(Teacher teacher, List<TeacherSubject> subjects)
+        public ActionResult EditTeacher(BCTeacher teacher, List<BCTeacherSubject> subjects)
         {
             _adminService.UpdateTeacher(teacher, subjects);
 
@@ -113,7 +115,7 @@ namespace Attendance_Management_System.Controllers
         {
             var teacher = _adminRepo.GetTeacher(teacherId);
 
-            return Json(new { Teacher = new { teacher.TeacherId, teacher.Title, teacher.FirstName, teacher.LastName,
+            return Json(new { Teacher = new { teacher.BCTeacherId, teacher.Title, teacher.FirstName, teacher.LastName,
                 teacher.CellPhone, teacher.HomePhone, IsActive = (teacher.IsActive ? 1 : 0)},
                 Subjects = _adminRepo.GetTeacherSubjects(teacherId)}, JsonRequestBehavior.AllowGet);
         }
@@ -130,11 +132,11 @@ namespace Attendance_Management_System.Controllers
 
         public ActionResult GetClasses()
         {
-            return Json(_adminRepo.GetActiveClasses(), JsonRequestBehavior.AllowGet);
+            return Json(_adminRepo.GetAllClasses(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult NewClass(Class c)
+        public ActionResult NewClass(BCClass c)
         {
             _adminRepo.AddClass(c);
 
@@ -142,7 +144,7 @@ namespace Attendance_Management_System.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateClass(Class c)
+        public ActionResult UpdateClass(BCClass c)
         {
             _adminRepo.UpdateClass(c);
 
@@ -159,5 +161,64 @@ namespace Attendance_Management_System.Controllers
 
             return Redirect("/admin/classes");
         }
+
+        public ActionResult SchoolSchedules()
+        {
+            SchoolScheduleVM vm = new SchoolScheduleVM
+            {
+                Classes = _adminRepo.GetAllClasses()
+            };
+
+            return View(vm);
+        }
+
+        public ActionResult Schedule(int classId)
+        {
+            AdminScheduleVM vm = new AdminScheduleVM();
+
+            vm.Class = _adminRepo.GetClass(classId);
+            vm.TeacherSubjects = _adminRepo.GetActiveTeacherSubjects();
+            vm.Schedule = _adminRepo.GetSchedule(classId);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult AddSchedule(List<BCSchedule> schedule)
+        {
+            _adminService.AddSchedule(schedule);
+
+            return Redirect("/Admin/Schedule?classId=" + schedule[0].BCClassId);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateSchedule(List<BCSchedule> schedule)
+        {
+            if(schedule.Count() > 0)
+            {
+                _adminService.UpdateSchedule(schedule, schedule[0].DayOfWeek, schedule[0].BCClassId);
+            }
+            return Redirect("/Admin/SchoolSchedules");
+        }
+
+        public ActionResult ScheduleDaily(DayOfWeek day, int classId)
+        {
+            var vm = new AdminScheduleDailyVM();
+
+            vm.Class = _adminRepo.GetClass(classId);
+            vm.TeacherSubjects = _adminRepo.GetActiveTeacherSubjects();
+            vm.Schedule = _adminRepo.GetDailySchedule(classId, day);
+            vm.DayOfWeek = day;
+
+            return View(vm);
+        }
+
+        public ActionResult getSchedule(int classId)
+        {
+            var schedule = _adminRepo.GetSchedule(classId);
+
+            return Json(schedule.Select(s => new { s.BCScheduleId, s.DayOfWeek, s.BCTeacherSubjectId, s.To, s.From }), JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

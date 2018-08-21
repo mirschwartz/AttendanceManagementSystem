@@ -4,6 +4,7 @@
 .btn-theme{
     background-color: #CC7F4F;
     color: white;
+    border-radius: 1px;
 }
 
 .table-striped > tbody > tr:nth-child(odd) > th {
@@ -28,4 +29,12 @@
 
 a{
   color: #3A4E48;
+}
+
+.font {
+    font-family: 'Cabin Sketch', serif;
+}
+
+div.ui-timepicker{
+    font-size: 10px;
 }

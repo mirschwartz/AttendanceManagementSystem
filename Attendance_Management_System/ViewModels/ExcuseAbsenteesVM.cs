@@ -8,6 +8,6 @@ namespace Attendance_Management_System.ViewModels
 {
     public class ExcuseAbsenteesVM
     {
-        public List<Attendance> AbsentStudents { get; set; }
+        public List<BCAttendance> AbsentStudents { get; set; }
     }
 }

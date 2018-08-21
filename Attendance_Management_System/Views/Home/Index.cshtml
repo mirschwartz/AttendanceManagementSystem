@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Mark Me Here";
     ViewBag.Description = "Home Page";
 }
 
@@ -11,16 +11,17 @@
         background-size: 100%;
     }
 
+    .font {
+        font-family: 'Cabin Sketch', serif;
+        color: white;
+    }
+
     div {
         color: white;
     }
 
     a {
         color: white;
-    }
-
-    .font {
-        font-family: 'Cabin Sketch', serif;
     }
 
     img {
@@ -31,17 +32,19 @@
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
         <h1 class="font" style="font-size: 50px;">Thank you for using</h1>
-        <h1 class="font" style="font-size: 75px;">Smooth Attendance!</h1>
-        <h3 class="font">Smart Attendance . Smooth Attendance . Simply Attendance</h3>
+        <h1 class="font" style="font-size: 90px;">Mark Me Here</h1>
+        <h4 class="font" style="font-size: 20px;">Smooth Attendance . Smart Attendance . Simply Attendance</h4>
     </div>
 </div>
 
 <div class="col-md-6 col-md-offset-1">
     <br />
     <h3 class="font">Table of Contents:</h3>
-    <a href="/attendance/index">Mark Attendance</a>
+    <a href="/Attendance" class="font"><img src="~/favicon.ico" /> Mark Attendance</a>
     <br />
-    <a href="/student/index">View Students</a>
+    <a href="/Student" class="font"><img src="~/favicon.ico" /> Students</a>
     <br />
-    <a href="/teacher/index">View Teachers</a>
+    <a href="/Teacher" class="font"><img src="~/favicon.ico" /> Teachers</a>
+    <br />
+    <a href="/Reports" class="font"><img src="~/favicon.ico" /> Reports</a>
 </div>

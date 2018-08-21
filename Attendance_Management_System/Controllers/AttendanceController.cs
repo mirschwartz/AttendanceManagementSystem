@@ -36,18 +36,18 @@ namespace Attendance_Management_System.Controllers
         }
 
         [HttpPost]
-        public ActionResult MarkAttendance(List<List<Attendance>> Class, List<TeacherSubject> teacher, DateTime date, int classId)
+        public ActionResult MarkAttendance(List<List<BCAttendance>> Class, List<BCTeacherSubject> teacher, DateTime date, int classId)
         {
             _attendanceService.MarkAttendance(Class, teacher, date, classId);
 
-            return Redirect($"/attendance/excuseabsentees?date={date}&classId={classId}");
+            return Redirect($"/Attendance/ExcuseAbsentees?Date={date}&ClassId={classId}");
         }
 
         [HttpPost]
-        public ActionResult UpdateAttendance(List<List<Attendance>> Class, List<TeacherSubject> teacher, DateTime date, int classId)
+        public ActionResult UpdateAttendance(List<List<BCAttendance>> Class, List<BCTeacherSubject> teacher, DateTime date, int classId)
         {
             _attendanceService.UpdateAttendance(date, classId, Class, teacher);
-            return Redirect($"/attendance/excuseabsentees?date={date}&classId={classId}");
+            return Redirect($"/Attendance/ExcuseAbsentees?Date={date}&ClassId={classId}");
         }
 
         public ActionResult ExcuseAbsentees(DateTime date, int classId)
@@ -60,7 +60,7 @@ namespace Attendance_Management_System.Controllers
         }
 
         [HttpPost]
-        public ActionResult ExcuseAbsentees(List<Attendance> attendance)
+        public ActionResult ExcuseAbsentees(List<BCAttendance> attendance)
         {
             _attendanceService.ExcuseAbsentees(attendance);
 
@@ -69,13 +69,16 @@ namespace Attendance_Management_System.Controllers
 
         public ActionResult GetTeachers()
         {
-            return Json(_attendanceRepo.GetActiveTeachersSubjects().Select(t => new { t.TeacherSubjectId, t.Teacher.Title, t.Teacher.LastName, t.Subject }), JsonRequestBehavior.AllowGet);
+            return Json(_attendanceRepo.GetActiveTeachersSubjects()
+                .Select(t => new { t.BCTeacherSubjectId, t.Teacher.Title, t.Teacher.LastName, t.Subject }),
+                JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetClassList(int classId)
         {
-            var students = _attendanceRepo.GetClassList(classId);
-            return Json(students.Select(s => new { s.StudentClassId, s.Student.FirstName, s.Student.LastName }), JsonRequestBehavior.AllowGet);
+            var students = _attendanceRepo.GetClassList(classId).OrderBy(c => c.Student.LastName);
+
+            return Json(students.Select(s => new { s.BCStudentClassId, s.Student.FirstName, s.Student.LastName }), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetClassListByDate(DateTime currentDate, string btn, int classId)
@@ -100,11 +103,11 @@ namespace Attendance_Management_System.Controllers
                 a.Status,
                 a.Period,
                 a.notes,
-                TeacherSubjectId = a.TeacherSubjectId,
-                StudentId = a.StudentClass.StudentClassId,
+                TeacherSubjectId = a.BCTeacherSubjectId,
+                StudentId = a.StudentClass.BCStudentClassId,
                 a.StudentClass.Student.FirstName,
                 a.StudentClass.Student.LastName,
-                a.StudentClass.ClassId
+                a.StudentClass.BCClassId
             }), JsonRequestBehavior.AllowGet);
         }
     }

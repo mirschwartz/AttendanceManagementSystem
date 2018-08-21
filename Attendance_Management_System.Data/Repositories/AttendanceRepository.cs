@@ -17,52 +17,52 @@ namespace Attendance_Management_System.Data.Repositories
             _connectionString = connectionString;
         }
 
-        public List<Class> GetActiveClasses()
+        public List<BCClass> GetActiveClasses()
         {
             using(var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Classes.Where(c => c.IsActive).ToList();
+                return dbContext.BCClasses.Where(c => c.IsActive).ToList();
             }
         }
 
-        public List<TeacherSubject> GetActiveTeachersSubjects()
+        public List<BCTeacherSubject> GetActiveTeachersSubjects()
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.TeacherSubjects
+                return dbContext.BCTeacherSubjects
                     .Include(s => s.Teacher)
                     .Where(t => t.Teacher.IsActive)
                     .ToList();
             }
         }
 
-        public List<Attendance> GetAttendanceByDate(int classId, DateTime date)
+        public List<BCAttendance> GetAttendanceByDate(int classId, DateTime date)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Attendances
+                return dbContext.BCAttendances
                     .Include(a => a.StudentClass.Student)
-                    .Where(a => a.StudentClass.ClassId == classId && a.Date == date)
+                    .Where(a => a.StudentClass.BCClassId == classId && a.Date == date)
                     .ToList();
             }
         }
 
-        public List<StudentClass> GetClassList(int classId)
+        public List<BCStudentClass> GetClassList(int classId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.StudentClasses
+                return dbContext.BCStudentClasses
                     .Include(s => s.Student)
-                    .Where(s => s.ClassId == classId && s.IsActive && s.Student.IsActive)
+                    .Where(s => s.BCClassId == classId && s.IsActive && s.Student.IsActive)
                     .ToList();
             }
         }
 
-        public void AddAttendance(List<Attendance> attendance)
+        public void AddAttendance(List<BCAttendance> attendance)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Attendances.AddRange(attendance);
+                dbContext.BCAttendances.AddRange(attendance);
                 dbContext.SaveChanges();
             }
         }
@@ -71,16 +71,16 @@ namespace Attendance_Management_System.Data.Repositories
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Database.ExecuteSqlCommand("DELETE a FROM Attendances a JOIN StudentClasses s ON s.StudentClassId = a.StudentClassId" +
-                    " WHERE a.Date = {0} AND s.ClassId = {1}", date, classId);
+                dbContext.Database.ExecuteSqlCommand("DELETE a FROM BCAttendances a JOIN BCStudentClasses s ON s.BCStudentClassId = a.BCStudentClassId" +
+                    " WHERE a.Date = {0} AND s.BCClassId = {1}", date, classId);
             }
         }
 
-        public void UpdateAttendance(Attendance attendance)
+        public void UpdateAttendance(BCAttendance attendance)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                dbContext.Entry<Attendance>(attendance).State = EntityState.Modified;
+                dbContext.Entry<BCAttendance>(attendance).State = EntityState.Modified;
                 dbContext.SaveChanges();
             }
         }
@@ -89,10 +89,10 @@ namespace Attendance_Management_System.Data.Repositories
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                var attendance = dbContext.Attendances
+                var attendance = dbContext.BCAttendances
                     .Include(a => a.StudentClass)
                     .OrderByDescending(a => a.Date)
-                    .FirstOrDefault(a => a.Date < date && a.StudentClass.ClassId == classId);
+                    .FirstOrDefault(a => a.Date < date && a.StudentClass.BCClassId == classId);
 
                 if (attendance != null)
                 {
@@ -106,10 +106,10 @@ namespace Attendance_Management_System.Data.Repositories
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                var attendance = dbContext.Attendances
+                var attendance = dbContext.BCAttendances
                     .Include(a => a.StudentClass)
                     .OrderBy(a => a.Date)
-                    .FirstOrDefault(a => a.Date > date && a.StudentClass.ClassId == classId);
+                    .FirstOrDefault(a => a.Date > date && a.StudentClass.BCClassId == classId);
 
                 if(attendance != null)
                 {
@@ -119,12 +119,12 @@ namespace Attendance_Management_System.Data.Repositories
             }
         }
 
-        public List<Attendance> GetDaysAbsentees(DateTime date, int classId)
+        public List<BCAttendance> GetDaysAbsentees(DateTime date, int classId)
         {
             using (var dbContext = new AttendanceSystemDB(_connectionString))
             {
-                return dbContext.Attendances
-                    .Where(a => a.Date == date && a.Status != Status.Present && a.StudentClass.ClassId == classId)
+                return dbContext.BCAttendances
+                    .Where(a => a.Date == date && a.Status != Status.Present && a.StudentClass.BCClassId == classId)
                     .Include(a => a.StudentClass.Student)
                     .Include(a => a.StudentClass.Class)
                     .Include(a => a.TeacherSubject.Teacher)

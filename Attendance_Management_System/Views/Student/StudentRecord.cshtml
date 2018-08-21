@@ -30,6 +30,8 @@
     <div class="col-md-9 col-md-offset-1">
         <h2>@Model.Student.FirstName @Model.Student.LastName - @Model.Classes</h2>
         <h5>@Model.Student.CellPhone</h5>
+        <h5>@Model.Student.Address1</h5>
+        <h5>@Model.Student.City, @Model.Student.State @Model.Student.Zip</h5>
     </div>
 </div>
 
@@ -41,21 +43,39 @@
                 <th>Teacher</th>
                 <th>Class</th>
                 <th>Date</th>
-                <th>Excused</th>
+                <th>Status</th>
+                <th class="edit">Edit</th>
             </tr>
             @{ var count = 0;
                 foreach (var a in Model.Attendance)
                 {
-                    count++;
+                    if (a.StudentClass.Class.IsActive)
+                    {
+                        count++;
                     <tr>
                         <td>@count</td>
                         <td>@a.TeacherSubject.Teacher.Title @a.TeacherSubject.Teacher.LastName</td>
                         <td>@a.StudentClass.Class.ClassName</td>
                         <td>@a.Date.ToShortDateString()</td>
-                        <td>@Html.Raw(a.Status == Status.ExcusedAbsence ? "<span class='glyphicon glyphicon-ok-circle' aria-hidden='true'></span>" : "")</td>
+                        <!--<td>@Html.Raw(a.Status == Status.ExcusedAbsence ? "<span class='glyphicon glyphicon-ok-circle' aria-hidden='true'></span>" : "")</td>-->
+                        <td class="active-status">@(a.Status == Status.ExcusedAbsence ? "Excused Absence" : (a.Status == Status.UnexcusedAbsence ? "Unexcused Absence" : (a.Status == Status.ExcusedLateness ? "Excused Lateness" : (a.Status == Status.UnexcusedLateness ? "Unexcused Lateness" : ""))))</td>
+                        <td class="edit">
+                            <div class="col-md-5">
+                            <select class="form-control status">
+                                <option></option>
+                                <option value="@Status.Present">Present</option>
+                                <option value="@Status.ExcusedAbsence">Excused Absence</option>
+                                <option value="@Status.UnexcusedAbsence">Unexcused absence</option>
+                                <option value="@Status.ExcusedLateness">Excused Lateness</option>
+                                <option value="@Status.UnexcusedLateness">Unexcused Lateness</option>
+                            </select>
+                                </div>
+                            <button class="btn btn-theme edit-status" data-id="@a.BCAttendanceId">Change</button>
+                        </td>
                     </tr>
+                        }
+                    }
                 }
-            }
         </table>
     </div>
 </div>

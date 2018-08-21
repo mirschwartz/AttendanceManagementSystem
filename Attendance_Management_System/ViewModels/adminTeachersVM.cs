@@ -8,6 +8,6 @@ namespace Attendance_Management_System.ViewModels
 {
     public class AdminTeachersVM
     {
-        public List<Teacher> Teachers { get; set; }
+        public List<BCTeacher> Teachers { get; set; }
     }
 }
